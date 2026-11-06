@@ -1,0 +1,227 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SkillPath AI - Free Resources</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3efff;
+        }
+
+        header {
+            background: #5636a5;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 35px auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #5636a5;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px #ccc;
+        }
+
+        .card h3 {
+            color: #5636a5;
+        }
+
+        .card a {
+            display: inline-block;
+            background: #5636a5;
+            color: white;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .card a:hover {
+            background: #372071;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #5636a5;
+            color: white;
+            padding: 13px 22px;
+            text-decoration: none;
+            border-radius: 7px;
+            margin: 20px 0;
+        }
+
+        footer {
+            background: #5636a5;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2 style="color:white;">SkillPath AI</h2>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+        <a href="analysis.html">Analysis</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h2>Free Learning Resources</h2>
+
+    <p id="welcome" style="text-align:center;"></p>
+
+    <div id="resources"></div>
+
+    <center>
+        <a href="roadmap.html" class="btn">
+            View Your 30-Day Roadmap →
+        </a>
+    </center>
+
+</div>
+
+<footer>
+    <p>© 2026 SkillPath AI | Empowering Students</p>
+</footer>
+
+<script>
+
+    let student = JSON.parse(localStorage.getItem("studentData"));
+
+    const learningResources = {
+
+        "Web Developer": [
+            {
+                name: "HTML and CSS",
+                platform: "freeCodeCamp",
+                link: "https://www.freecodecamp.org/learn/"
+            },
+            {
+                name: "JavaScript",
+                platform: "MDN Web Docs",
+                link: "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+            },
+            {
+                name: "React",
+                platform: "Official React Tutorial",
+                link: "https://react.dev/learn"
+            }
+        ],
+
+        "Python Developer": [
+            {
+                name: "Python Programming",
+                platform: "Python Official Tutorial",
+                link: "https://docs.python.org/3/tutorial/"
+            },
+            {
+                name: "Python Practice",
+                platform: "freeCodeCamp",
+                link: "https://www.freecodecamp.org/learn/"
+            },
+            {
+                name: "Django",
+                platform: "Django Documentation",
+                link: "https://docs.djangoproject.com/en/stable/intro/tutorial01/"
+            }
+        ],
+
+        "Data Analyst": [
+            {
+                name: "Python for Data Analysis",
+                platform: "Kaggle Learn",
+                link: "https://www.kaggle.com/learn"
+            },
+            {
+                name: "SQL",
+                platform: "SQLBolt",
+                link: "https://sqlbolt.com/"
+            },
+            {
+                name: "Data Visualization",
+                platform: "Microsoft Learn",
+                link: "https://learn.microsoft.com/en-us/training/"
+            }
+        ],
+
+        "UI/UX Designer": [
+            {
+                name: "UI/UX Design",
+                platform: "Google Design",
+                link: "https://design.google/"
+            },
+            {
+                name: "Figma Tutorials",
+                platform: "Figma Learn",
+                link: "https://help.figma.com/hc/en-us"
+            },
+            {
+                name: "Design Fundamentals",
+                platform: "Interaction Design Foundation",
+                link: "https://www.interaction-design.org/"
+            }
+        ]
+
+    };
+
+    if (student) {
+
+        document.getElementById("welcome").innerText =
+            "Recommended learning resources for " + student.career;
+
+        let list = learningResources[student.career] || [];
+
+        document.getElementById("resources").innerHTML =
+            list.map(resource => `
+                <div class="card">
+                    <h3>${resource.name}</h3>
+                    <p>Platform: ${resource.platform}</p>
+                    <a href="${resource.link}" target="_blank">
+                        Start Learning →
+                    </a>
+                </div>
+            `).join("");
+
+    } else {
+
+        document.getElementById("resources").innerHTML =
+            "<p>Please register first to view resources.</p>" +
+            '<a href="register.html">Go to Registration</a>';
+
+    }
+
+</script>
+
+</body>
+</html>
+```

@@ -1,0 +1,188 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SkillPath AI - Registration</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3efff;
+        }
+
+        header {
+            background: #5636a5;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        .container {
+            background: white;
+            width: 90%;
+            max-width: 550px;
+            margin: 35px auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ccc;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            color: #5636a5;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .skills label {
+            display: inline-block;
+            font-weight: normal;
+            margin: 10px 8px 5px 0;
+        }
+
+        .skills input {
+            width: auto;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 25px;
+            background: #5636a5;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #372071;
+        }
+
+        footer {
+            text-align: center;
+            background: #5636a5;
+            color: white;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2 style="color:white;">SkillPath AI</h2>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h2>Student Registration</h2>
+
+    <form id="studentForm">
+
+        <label>Student Name</label>
+        <input type="text" id="name"
+        placeholder="Enter your name" required>
+
+        <label>Email ID</label>
+        <input type="email" id="email"
+        placeholder="Enter your email" required>
+
+        <label>Degree / Branch</label>
+        <input type="text" id="degree"
+        placeholder="Example: B.Sc Computer Science" required>
+
+        <label>Year of Study</label>
+        <select id="year" required>
+            <option value="">Select Year</option>
+            <option>1st Year</option>
+            <option>2nd Year</option>
+            <option>3rd Year</option>
+        </select>
+
+        <label>Choose Your Career Goal</label>
+        <select id="career" required>
+            <option value="">Select Career</option>
+            <option>Web Developer</option>
+            <option>Python Developer</option>
+            <option>Data Analyst</option>
+            <option>UI/UX Designer</option>
+        </select>
+
+        <label>Select Your Current Skills</label>
+
+        <div class="skills">
+            <label><input type="checkbox" name="skill" value="HTML"> HTML</label>
+            <label><input type="checkbox" name="skill" value="CSS"> CSS</label>
+            <label><input type="checkbox" name="skill" value="JavaScript"> JavaScript</label>
+            <label><input type="checkbox" name="skill" value="Python"> Python</label>
+            <label><input type="checkbox" name="skill" value="SQL"> SQL</label>
+            <label><input type="checkbox" name="skill" value="Communication"> Communication</label>
+        </div>
+
+        <button type="submit">Analyze My Skills</button>
+
+    </form>
+
+</div>
+
+<footer>
+    <p>© 2026 SkillPath AI</p>
+</footer>
+
+<script>
+    document.getElementById("studentForm").addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        let student = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            degree: document.getElementById("degree").value,
+            year: document.getElementById("year").value,
+            career: document.getElementById("career").value,
+            skills: Array.from(
+                document.querySelectorAll('input[name="skill"]:checked')
+            ).map(skill => skill.value)
+        };
+
+        localStorage.setItem("studentData", JSON.stringify(student));
+
+        window.location.href = "analysis.html";
+
+    });
+</script>
+
+</body>
+</html>
+```

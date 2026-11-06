@@ -1,0 +1,225 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SkillPath AI - Skill Analysis</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3efff;
+        }
+
+        header {
+            background: #5636a5;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .container {
+            max-width: 750px;
+            width: 90%;
+            margin: 35px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ccc;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: #5636a5;
+            text-align: center;
+        }
+
+        .section {
+            background: #f8f6ff;
+            padding: 18px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .section h3 {
+            color: #5636a5;
+        }
+
+        .skill {
+            display: inline-block;
+            background: #e6ddff;
+            padding: 9px 14px;
+            margin: 5px;
+            border-radius: 20px;
+        }
+
+        .missing {
+            background: #ffe5e5;
+            color: #b3261e;
+        }
+
+        .good {
+            color: green;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #5636a5;
+            color: white;
+            padding: 12px 22px;
+            text-decoration: none;
+            border-radius: 7px;
+            margin-top: 15px;
+        }
+
+        footer {
+            background: #5636a5;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2 style="color:white;">SkillPath AI</h2>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h2>Your Skill Gap Analysis</h2>
+
+    <h3 id="welcome"></h3>
+
+    <div class="section">
+        <h3>Career Goal</h3>
+        <p id="career"></p>
+    </div>
+
+    <div class="section">
+        <h3>Your Current Skills</h3>
+        <div id="currentSkills"></div>
+    </div>
+
+    <div class="section">
+        <h3>Skills You Need to Learn</h3>
+        <div id="missingSkills"></div>
+    </div>
+
+    <div class="section">
+        <h3>Career Readiness</h3>
+        <h2 id="percentage"></h2>
+        <p id="message"></p>
+    </div>
+
+    <a href="resources.html" class="btn">
+        Explore Free Learning Resources →
+    </a>
+
+</div>
+
+<footer>
+    <p>© 2026 SkillPath AI | Empowering Students</p>
+</footer>
+
+<script>
+
+    let studentData = JSON.parse(localStorage.getItem("studentData"));
+
+    const careerSkills = {
+        "Web Developer": [
+            "HTML", "CSS", "JavaScript", "React", "Git"
+        ],
+
+        "Python Developer": [
+            "Python", "SQL", "Django", "Git", "Problem Solving"
+        ],
+
+        "Data Analyst": [
+            "Python", "SQL", "Excel", "Power BI", "Statistics"
+        ],
+
+        "UI/UX Designer": [
+            "Figma", "UI Design", "UX Research", "Wireframing", "Prototyping"
+        ]
+    };
+
+    if (studentData) {
+
+        document.getElementById("welcome").innerText =
+            "Welcome, " + studentData.name + "!";
+
+        document.getElementById("career").innerText =
+            studentData.career;
+
+        let requiredSkills = careerSkills[studentData.career] || [];
+
+        let currentSkills = studentData.skills || [];
+
+        let missingSkills = requiredSkills.filter(
+            skill => !currentSkills.some(
+                current => current.toLowerCase() === skill.toLowerCase()
+            )
+        );
+
+        document.getElementById("currentSkills").innerHTML =
+            currentSkills.length
+            ? currentSkills.map(skill =>
+                `<span class="skill">${skill}</span>`
+              ).join("")
+            : "No skills selected.";
+
+        document.getElementById("missingSkills").innerHTML =
+            missingSkills.length
+            ? missingSkills.map(skill =>
+                `<span class="skill missing">${skill}</span>`
+              ).join("")
+            : "<p class='good'>Great! You have all the listed skills.</p>";
+
+        let percentage = requiredSkills.length
+            ? Math.round(
+                ((requiredSkills.length - missingSkills.length) /
+                requiredSkills.length) * 100
+              )
+            : 0;
+
+        document.getElementById("percentage").innerText =
+            percentage + "%";
+
+        document.getElementById("message").innerText =
+            percentage >= 80
+            ? "Excellent! You are close to your career goal."
+            : percentage >= 50
+            ? "Good progress! Keep learning the missing skills."
+            : "Start learning the missing skills step by step.";
+
+    } else {
+
+        document.querySelector(".container").innerHTML =
+            "<h2>No student data found!</h2>" +
+            "<p>Please complete registration first.</p>" +
+            '<a class="btn" href="register.html">Go to Registration</a>';
+
+    }
+
+</script>
+
+</body>
+</html>
+```

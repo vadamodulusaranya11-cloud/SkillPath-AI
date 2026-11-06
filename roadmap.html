@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI - 30 Day Roadmap</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f3f4ff;
+    color: #222;
+}
+
+header {
+    background: #25256b;
+    color: white;
+    padding: 22px;
+    text-align: center;
+}
+
+.container {
+    max-width: 900px;
+    margin: 25px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px #ddd;
+}
+
+h2 {
+    color: #25256b;
+}
+
+select, button {
+    padding: 12px;
+    border: none;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+select {
+    width: 100%;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+button {
+    background: #25256b;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #4545a5;
+}
+
+.progress-bg {
+    background: #ddd;
+    height: 15px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: #28a745;
+    height: 100%;
+    width: 0%;
+}
+
+.day {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 12px 0;
+}
+
+.day.completed {
+    border-left: 6px solid green;
+    background: #effff2;
+}
+
+.question {
+    margin: 20px 0;
+}
+
+.option {
+    display: block;
+    padding: 10px;
+    margin: 7px 0;
+    background: #f1f1ff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#quizBox {
+    display: none;
+}
+
+#result {
+    font-weight: bold;
+    margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>SkillPath AI</h1>
+    <p>Your 30-Day Career Learning Roadmap</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+    <h2>Choose Your Career</h2>
+
+    <select id="career" onchange="loadRoadmap()">
+        <option value="Web Developer">Web Developer</option>
+        <option value="Python Developer">Python Developer</option>
+        <option value="Data Analyst">Data Analyst</option>
+        <option value="UI/UX Designer">UI/UX Designer</option>
+    </select>
+</div>
+
+<div class="card">
+    <h2>Your Learning Progress</h2>
+    <p id="progressText">0 / 30 Days Completed</p>
+
+    <div class="progress-bg">
+        <div class="progress-fill" id="progressBar"></div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>30-Day Learning Plan</h2>
+    <div id="roadmap"></div>
+</div>
+
+<div class="card" id="quizBox">
+    <h2 id="quizTitle">Daily Quiz</h2>
+    <div id="questions"></div>
+    <button onclick="checkAnswers()">Submit Quiz</button>
+    <p id="result"></p>
+</div>
+
+</div>
+
+<script>
+
+const plans = {
+
+"Web Developer": [
+"HTML Introduction","HTML Elements","HTML Forms",
+"CSS Introduction","CSS Selectors","CSS Box Model",
+"CSS Flexbox","CSS Grid","Responsive Design",
+"JavaScript Introduction","Variables","Data Types",
+"Operators","Conditions","Loops",
+"Functions","Arrays","Objects",
+"DOM Introduction","DOM Events","Form Validation",
+"Git Basics","GitHub","React Introduction",
+"React Components","React Props","React State",
+"Mini Project Planning","Build Web Page","Test Website",
+"Final Project"
+],
+
+"Python Developer": [
+"Python Introduction","Variables","Data Types",
+"Operators","Input and Output","Conditional Statements",
+"For Loops","While Loops","Functions",
+"Lists","Tuples","Sets",
+"Dictionaries","Strings","String Methods",
+"File Handling","Exception Handling","Modules",
+"Object Oriented Programming","Classes and Objects",
+"Inheritance","Python Libraries","NumPy Basics",
+"Pandas Basics","Working with CSV","Database Basics",
+"SQL Introduction","Python with SQL","Mini Project",
+"Final Project"
+],
+
+"Data Analyst": [
+"Introduction to Data Analytics","Types of Data",
+"Excel Basics","Excel Formulas","Excel Functions",
+"Sorting and Filtering","Data Cleaning","Charts in Excel",
+"Pivot Tables","Statistics Introduction","Mean Median Mode",
+"Data Visualization","Introduction to SQL","SQL SELECT",
+"SQL WHERE","SQL ORDER BY","SQL GROUP BY",
+"SQL JOINS","Python Introduction","Python Variables",
+"Python Lists","Pandas Introduction","DataFrames",
+"Data Cleaning with Python","Matplotlib",
+"Power BI Introduction","Power BI Charts",
+"Dashboard Creation","Mini Project","Final Project"
+],
+
+"UI/UX Designer": [
+"Introduction to UI/UX","UI Design Basics",
+"UX Design Basics","Design Principles","Color Theory",
+"Typography","Layout Design","Visual Hierarchy",
+"User Research","User Personas","User Journey",
+"Wireframing","Low Fidelity Design","High Fidelity Design",
+"Prototyping","Figma Introduction","Figma Tools",
+"Frames and Layers","Components","Auto Layout",
+"Buttons and Forms","Mobile App Design",
+"Website Design","Usability Testing",
+"Accessibility","Design Systems","Portfolio Basics",
+"Mini Project Planning","Build Design","Final Project"
+]
+
+};
+
+
+// Daily questions: generated from career-specific concepts.
+
+const concepts = {
+
+"Web Developer": [
+["HTML","Which language structures a webpage?","HTML","Python","SQL"],
+["HTML Elements","Which tag creates a paragraph?","<p>","<h1>","<img>"],
+["HTML Forms","Which tag creates a form?","<form>","<table>","<div>"],
+["CSS","What does CSS control?","Page styling","Database","Server"],
+["CSS Selectors","Which selector targets a class?","Dot (.)","#","*"],
+["Box Model","Which property adds inner spacing?","Padding","Margin","Border"],
+["Flexbox","Which property enables flex layout?","display:flex","position:fixed","float:left"],
+["CSS Grid","Which CSS system creates grid layouts?","CSS Grid","HTML","SQL"],
+["Responsive Design","What helps pages adapt to screen sizes?","Media queries","Loops","Arrays"],
+["JavaScript","Which language adds webpage interactivity?","JavaScript","SQL","CSS"],
+["Variables","Which keyword declares a block-scoped variable?","let","style","form"],
+["Data Types","Which is a JavaScript boolean?","true","Hello","25px"],
+["Operators","Which operator checks strict equality?","===","=","!="],
+["Conditions","Which statement checks a condition?","if","for","class"],
+["Loops","Which loop repeats while a condition is true?","while","style","form"],
+["Functions","Which keyword defines a JavaScript function?","function","table","body"],
+["Arrays","Which method adds an item to an array?","push()","popAll()","joinNew()"],
+["Objects","Which format stores key-value pairs?","Object","Loop","Selector"],
+["DOM","What does DOM represent?","Document Object Model","Data Output Method","Design Object Mode"],
+["Events","Which event occurs when a button is clicked?","click","hovering","loading"],
+["Validation","Which attribute makes an input compulsory?","required","color","margin"],
+["Git","Which command saves changes to Git history?","git commit","git open","git start"],
+["GitHub","What is GitHub mainly used for?","Code hosting","Photo editing","Video calling"],
+["React","React is mainly used to build what?","User interfaces","Databases","Operating systems"],
+["Components","What are React components?","Reusable UI parts","CSS colors","Database tables"],
+["Props","What do props pass?","Data to components","CSS files","Database passwords"],
+["State","What does React state manage?","Component data","HTML tags","File names"],
+["Project","What should be planned before coding?","Requirements","Colors only","Animations only"],
+["Testing","Why test a website?","Find errors","Delete content","Change passwords"],
+["Deployment","What does deployment mean?","Making a website available online","Writing notes","Closing browser"]
+],
+
+"Python Developer": [
+["Python","Who created Python?","Guido van Rossum","Dennis Ritchie","James Gosling"],
+["Variables","Which symbol assigns a value?","=","==","+="],
+["Data Types","Which type stores whole numbers?","int","str","bool"],
+["Operators","Which operator performs multiplication?","*","+","/"],
+["Input","Which function accepts user input?","input()","print()","type()"],
+["Conditions","Which keyword checks a condition?","if","def","import"],
+["For Loops","Which loop iterates over a sequence?","for","if","class"],
+["While Loops","Which loop runs while a condition is true?","while","return","import"],
+["Functions","Which keyword defines a function?","def","for","print"],
+["Lists","Which brackets create a list?","[]","{}","()"],
+["Tuples","Which brackets create a tuple?","()","[]","{}"],
+["Sets","Which collection stores unique values?","set","list","tuple"],
+["Dictionaries","Which structure stores key-value pairs?","dictionary","string","integer"],
+["Strings","Which method converts text to uppercase?","upper()","lowercase()","capitalizeAll()"],
+["String Methods","Which method removes surrounding spaces?","strip()","splitAll()","remove()"],
+["Files","Which function opens a file?","open()","file()","readfile()"],
+["Exceptions","Which block handles exceptions?","except","repeat","stop"],
+["Modules","Which keyword imports a module?","import","include","using"],
+["OOP","What does OOP stand for?","Object Oriented Programming","Online Output Process","Open Object Program"],
+["Classes","Which keyword creates a class?","class","def","object"],
+["Inheritance","What allows one class to use another class's features?","Inheritance","Iteration","Selection"],
+["Libraries","What is a Python library?","Reusable code collection","A hardware device","A browser"],
+["NumPy","NumPy is mainly used for?","Numerical computing","Web styling","Email"],
+["Pandas","Pandas is mainly used for?","Data analysis","Video editing","Networking"],
+["CSV","What does CSV stand for?","Comma Separated Values","Computer System Version","Code Syntax Value"],
+["Database","Where is structured data stored?","Database","Browser","Compiler"],
+["SQL","Which command retrieves data?","SELECT","DELETE","DROP"],
+["Python SQL","Which helps Python connect to databases?","Database connector","CSS selector","HTML tag"],
+["Project","Why build a mini project?","Apply learned concepts","Avoid practice","Skip testing"],
+["Final Project","What is important before submitting a project?","Testing and documentation","Only decoration","Deleting files"]
+],
+
+"Data Analyst": [
+["Analytics","What does data analysis help us do?","Make decisions","Design logos","Write stories"],
+["Data Types","Which is numerical data?","25","Blue","Monday"],
+["Excel","What is Excel used for?","Spreadsheets","Video editing","Web hosting"],
+["Formulas","Which symbol starts an Excel formula?","=","#","@"],
+["Functions","Which function adds numbers?","SUM()","COUNTBLANK()","UPPER()"],
+["Filtering","What does filtering do?","Shows selected records","Deletes all data","Changes fonts"],
+["Cleaning","What is data cleaning?","Correcting data errors","Adding colors","Printing sheets"],
+["Charts","Which chart compares categories?","Bar chart","Paragraph","Textbox"],
+["Pivot Tables","What are pivot tables used for?","Summarizing data","Writing code","Editing images"],
+["Statistics","What is statistics about?","Collecting and analyzing data","Drawing pictures","Building websites"],
+["Mean","How is the mean calculated?","Sum divided by count","Largest value only","Smallest value only"],
+["Median","What is the median?","Middle value","Total value","First value"],
+["Visualization","Why visualize data?","Understand patterns","Hide information","Delete records"],
+["SQL","What is SQL used for?","Managing databases","Styling webpages","Drawing"],
+["SELECT","Which SQL command retrieves records?","SELECT","UPDATE","DROP"],
+["WHERE","What does WHERE do in SQL?","Filters rows","Creates charts","Deletes database"],
+["ORDER BY","What does ORDER BY do?","Sorts results","Adds columns","Creates tables"],
+["GROUP BY","What does GROUP BY do?","Groups rows","Deletes rows","Changes colors"],
+["JOIN","Why use SQL JOIN?","Combine related tables","Create images","Format text"],
+["Python","Which language is popular for data analysis?","Python","HTML","CSS"],
+["Variables","Which symbol assigns a value in Python?","=","==","!"],
+["Lists","Which brackets represent a Python list?","[]","{}","()"],
+["Pandas","Which library is used for data analysis?","Pandas","React","Bootstrap"],
+["DataFrames","What is a Pandas DataFrame?","Two-dimensional data structure","Image format","Web browser"],
+["Cleaning","What does handling missing data mean?","Managing empty values","Adding animations","Changing passwords"],
+["Matplotlib","Which library creates Python charts?","Matplotlib","Django","Flask"],
+["Power BI","Power BI is used for?","Business intelligence","Game development","Text messaging"],
+["Charts","What does a dashboard display?","Key information visually","Only source code","Only passwords"],
+["Mini Project","What is the first step in a data project?","Understand the problem","Delete data","Skip analysis"],
+["Final Project","What should a good data report include?","Findings and insights","Only raw data","Unrelated images"]
+],
+
+"UI/UX Designer": [
+["UI/UX","What does UI stand for?","User Interface","User Internet","Universal Input"],
+["UI Basics","What does UX focus on?","User experience","Computer speed","File storage"],
+["UX Basics","What is a good user experience?","Easy and useful interaction","Confusing navigation","Too many steps"],
+["Principles","What improves visual clarity?","Consistency","Random spacing","Unclear text"],
+["Color Theory","Which colors are opposite on the color wheel?","Complementary colors","Neutral colors","Pastel colors"],
+["Typography","What is typography?","Arrangement of text","Image compression","Coding"],
+["Layout","What is a layout?","Arrangement of elements","Database","Programming language"],
+["Hierarchy","What does visual hierarchy guide?","User attention","Internet speed","File size"],
+["Research","Why conduct user research?","Understand user needs","Choose random colors","Avoid feedback"],
+["Personas","What is a user persona?","Fictional user profile based on research","A logo","A coding tool"],
+["Journey","What does a user journey map show?","User's steps and experience","Source code","Color palette"],
+["Wireframes","What is a wireframe?","Basic screen layout","Final animation","Database"],
+["Low Fidelity","Low-fidelity designs are usually?","Simple rough layouts","Final polished screens","Videos"],
+["High Fidelity","High-fidelity designs include?","Detailed visual design","Only boxes","Plain notes"],
+["Prototyping","What does a prototype demonstrate?","How a design may work","Database storage","Programming errors"],
+["Figma","Figma is mainly used for?","Interface design","Data analysis","Operating systems"],
+["Tools","What is a Figma frame used for?","Designing screen areas","Writing SQL","Running Python"],
+["Layers","Why use layers in design?","Organize elements","Delete all elements","Change internet speed"],
+["Components","What are design components?","Reusable design elements","Database rows","File extensions"],
+["Auto Layout","What does Auto Layout help with?","Automatic spacing and arrangement","Writing code","Editing audio"],
+["Buttons","What should a good button have?","Clear action label","Unclear text","No purpose"],
+["Mobile Design","What matters in mobile design?","Small screen usability","Desktop-only layout","Tiny buttons"],
+["Website Design","What makes navigation useful?","Clear labels and structure","Hidden links","Random placement"],
+["Usability","What is usability testing?","Testing ease of use","Changing passwords","Writing code"],
+["Accessibility","What does accessible design support?","People with different abilities","Only designers","Only developers"],
+["Design Systems","What is a design system?","Reusable design rules and components","A database","An operating system"],
+["Portfolio","What does a design portfolio show?","Your work and process","Only certificates","Only personal photos"],
+["Planning","What comes before designing?","Understanding requirements","Random drawing","Publishing"],
+["Design","What should be checked before delivery?","Layout and usability","Only file name","Internet history"],
+["Final Project","What should a design presentation explain?","Problem, process and solution","Only colors","Only software name"]
+]
+
+};
+
+
+let currentDay = 0;
+let currentQuestions = [];
+
+function getStudentKey() {
+    let student = JSON.parse(localStorage.getItem("studentData") || "{}");
+    return student.email || student.name || "guest";
+}
+
+function getProgress() {
+    return JSON.parse(
+        localStorage.getItem("roadmapProgress_" + getStudentKey()) || "{}"
+    );
+}
+
+function saveProgress(progress) {
+    localStorage.setItem(
+        "roadmapProgress_" + getStudentKey(),
+        JSON.stringify(progress)
+    );
+}
+
+function loadRoadmap() {
+
+    let career = document.getElementById("career").value;
+    let roadmap = document.getElementById("roadmap");
+    let progress = getProgress();
+
+    roadmap.innerHTML = "";
+
+    plans[career].forEach((topic, index) => {
+
+        let completed = progress[index + 1] === true;
+
+        roadmap.innerHTML += `
+        <div class="day ${completed ? 'completed' : ''}">
+            <h3>Day ${index + 1}: ${topic}</h3>
+            <p>${completed ? '✅ Completed' : '📘 Learn this topic and take the quiz.'}</p>
+            <button onclick="startQuiz(${index})"
+            ${completed ? 'disabled' : ''}>
+                ${completed ? 'Completed' : 'Take Verification Quiz'}
+            </button>
+        </div>
+        `;
+    });
+
+    updateProgress();
+}
+
+function updateProgress() {
+
+    let progress = getProgress();
+    let count = Object.values(progress).filter(v => v === true).length;
+
+    document.getElementById("progressText").innerText =
+        count + " / 30 Days Completed";
+
+    document.getElementById("progressBar").style.width =
+        (count / 30 * 100) + "%";
+}
+
+
+function startQuiz(dayIndex) {
+
+    currentDay = dayIndex;
+
+    let career = document.getElementById("career").value;
+    let question = concepts[career][dayIndex];
+
+    currentQuestions = [
+
+        {
+            q: question[1],
+            options: [question[2], question[3], question[4]],
+            answer: 0
+        },
+
+        {
+            q: "Which option is related to " + question[0] + "?",
+            options: [question[2], question[4], question[3]],
+            answer: 0
+        },
+
+        {
+            q: "Why is " + question[0] + " important?",
+            options: [
+                question[3],
+                "It helps apply the concept correctly",
+                question[4]
+            ],
+            answer: 1
+        }
+
+    ];
+
+    let html = "";
+
+    currentQuestions.forEach((q, index) => {
+
+        html += `
+        <div class="question">
+            <h3>${index + 1}. ${q.q}</h3>
+        `;
+
+        q.options.forEach((option, i) => {
+
+            let safeOption = option
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            html += `
+            <label class="option">
+                <input type="radio"
+                name="question${index}"
+                value="${i}">
+                ${safeOption}
+            </label>
+            `;
+        });
+
+        html += `</div>`;
+    });
+
+    document.getElementById("quizTitle").innerText =
+        "Day " + (dayIndex + 1) + " Verification Quiz";
+
+    document.getElementById("questions").innerHTML = html;
+
+    document.getElementById("result").innerText = "";
+
+    document.getElementById("quizBox").style.display = "block";
+
+    document.getElementById("quizBox").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+function checkAnswers() {
+
+    let score = 0;
+    let reviewHTML = "";
+
+    for (let i = 0; i < 3; i++) {
+
+        let selected = document.querySelector(
+            'input[name="question' + i + '"]:checked'
+        );
+
+        if (!selected) {
+            alert("Please answer all questions!");
+            return;
+        }
+
+        let chosen = Number(selected.value);
+        let correct = currentQuestions[i].answer;
+
+        if (chosen === correct) {
+            score++;
+
+            reviewHTML += `
+            <p style="color:green;">
+            ✅ Question ${i + 1}: Correct!
+            </p>`;
+        } else {
+
+            reviewHTML += `
+            <p style="color:red;">
+            ❌ Question ${i + 1}: Wrong Answer
+            </p>
+            <p style="color:green;">
+            Correct Answer: ${currentQuestions[i].options[correct]}
+            </p>`;
+        }
+    }
+
+    if (score >= 2) {
+
+        let progress = getProgress();
+        progress[currentDay + 1] = true;
+        saveProgress(progress);
+
+        reviewHTML += `
+        <h3 style="color:green;">
+        🎉 Congratulations! Day Completed!
+        </h3>`;
+
+        loadRoadmap();
+
+    } else {
+
+        reviewHTML += `
+        <h3 style="color:red;">
+        ❌ Not Passed! Try Again.
+        </h3>`;
+    }
+
+    reviewHTML += `<h3>Your Score: ${score}/3</h3>`;
+
+    document.getElementById("questions").innerHTML = reviewHTML;
+    document.getElementById("result").innerHTML = "";
+}
+
+loadRoadmap();
+
+</script>
+
+</body>
+</html>
