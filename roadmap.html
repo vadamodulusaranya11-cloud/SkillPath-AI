@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI - Smart Roadmap</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f0ff;
+    color: #25213b;
+}
+
+header {
+    background: #4b35a5;
+    color: white;
+    padding: 22px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.container {
+    max-width: 950px;
+    margin: 25px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px #00000012;
+}
+
+.progress-bg {
+    background: #e2ddf5;
+    height: 14px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#progressBar {
+    height: 14px;
+    width: 0%;
+    background: #4b35a5;
+    transition: 0.3s;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+    gap: 9px;
+}
+
+.day-btn {
+    border: none;
+    padding: 12px 5px;
+    border-radius: 8px;
+    background: #eeeaff;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.day-btn.active {
+    background: #4b35a5;
+    color: white;
+}
+
+.day-btn.completed {
+    background: #c8f5d5;
+    color: #126b35;
+}
+
+button {
+    background: #4b35a5;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.option {
+    display: block;
+    padding: 12px;
+    margin: 9px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.option:hover {
+    background: #f1edff;
+}
+
+#feedback p {
+    line-height: 1.6;
+}
+
+.challenge {
+    background: #f1edff;
+    border-left: 5px solid #4b35a5;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.back {
+    display: inline-block;
+    margin: 20px;
+    color: white;
+    text-decoration: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <a class="back" href="resources.html">← Back</a>
+    <h1>🚀 SkillPath AI</h1>
+    <p>30-Day Smart Career Learning Roadmap</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2 id="welcome">Your Learning Journey</h2>
+        <p id="careerName"></p>
+
+        <h3>Overall Progress</h3>
+        <div class="progress-bg">
+            <div id="progressBar"></div>
+        </div>
+
+        <p id="progressText">0 / 30 Days Completed</p>
+    </div>
+
+    <div class="card">
+        <h2>📅 Select Your Learning Day</h2>
+        <div class="days" id="dayButtons"></div>
+    </div>
+
+    <div class="card" id="lesson">
+        <h2>Select a day to start learning!</h2>
+    </div>
+
+    <div class="card" id="quizArea" style="display:none;">
+        <h2>🧠 Daily Knowledge Check</h2>
+        <p>Answer all 3 questions. You need at least 2 correct answers to complete this day.</p>
+
+        <div id="questions"></div>
+
+        <button onclick="checkAnswers()">Submit Answers</button>
+
+        <div id="feedback"></div>
+    </div>
+
+</div>
+
+<script>
+
+const student = JSON.parse(localStorage.getItem("studentData")) || {};
+
+const career = student.career || "Web Developer";
+
+document.getElementById("welcome").innerText =
+    "Welcome, " + (student.name || "Student") + "!";
+
+document.getElementById("careerName").innerText =
+    "Selected Career: " + career;
+
+
+// 30-day career learning topics
+
+const roadmaps = {
+
+"Web Developer": [
+"HTML Basics","HTML Forms","CSS Basics","CSS Colors and Fonts",
+"CSS Box Model","Flexbox","CSS Grid","Responsive Design",
+"JavaScript Introduction","Variables and Data Types",
+"Operators","Conditional Statements","Loops",
+"Functions","Arrays","Objects","DOM Introduction",
+"DOM Manipulation","Events","Form Validation",
+"JavaScript ES6","Arrow Functions","JSON","Fetch API Basics",
+"Git and GitHub","Bootstrap","Website Project Planning",
+"Build a Portfolio Website","Testing and Debugging","Final Website Project"
+],
+
+"Python Developer": [
+"Python Introduction","Variables","Data Types","Operators",
+"Conditional Statements","Loops","Functions","Lists",
+"Tuples","Sets","Dictionaries","String Methods",
+"List Comprehensions","File Handling","Exception Handling",
+"Modules","Object Oriented Programming","Classes and Objects",
+"Inheritance","Libraries","NumPy Basics","Pandas Basics",
+"Data Processing","Working with APIs","Flask Introduction",
+"Database Basics","Python and SQL","Debugging","Mini Project",
+"Final Python Project"
+],
+
+"Data Analyst": [
+"Introduction to Data Analytics","Excel Basics","Excel Formulas",
+"Sorting and Filtering","Pivot Tables","Data Cleaning",
+"Introduction to Statistics","Mean Median Mode","Data Visualization",
+"Charts in Excel","SQL Introduction","SQL SELECT",
+"SQL WHERE","SQL GROUP BY","SQL JOIN",
+"Python Introduction","Python Variables","Python Lists",
+"Pandas Introduction","DataFrames","Data Cleaning with Pandas",
+"NumPy Basics","Matplotlib","Data Visualization Project",
+"Power BI Introduction","Dashboard Design","Data Interpretation",
+"Exploratory Data Analysis","Mini Analysis Project",
+"Final Data Analytics Project"
+],
+
+"UI/UX Designer": [
+"Introduction to UI/UX","Design Principles","Color Theory",
+"Typography","Layout Design","User Research",
+"User Personas","User Journey Mapping","Wireframing",
+"Low Fidelity Design","High Fidelity Design","Figma Introduction",
+"Figma Frames","Figma Components","Auto Layout",
+"Prototyping","User Interaction","Responsive Design",
+"Accessibility","Usability Testing","Design Systems",
+"Mobile App Design","Website Design","Visual Hierarchy",
+"UX Writing","Design Feedback","Portfolio Planning",
+"Case Study Creation","Design Improvements","Final UI/UX Project"
+]
+
+};
+
+
+// Practical challenges
+
+const challenges = {
+"Web Developer":
+"Create a simple webpage using HTML and apply CSS styling.",
+"Python Developer":
+"Write a Python program that accepts two numbers and performs basic calculations.",
+"Data Analyst":
+"Create a small student marks table and calculate its average.",
+"UI/UX Designer":
+"Design a simple login page with a username field, password field and login button."
+};
+
+
+// Career knowledge-check questions
+
+const quizBank = {
+
+"Web Developer": [
+{
+q: "Which language is used to structure a webpage?",
+options: ["CSS", "HTML", "Python"],
+answer: 1,
+why: "HTML defines the structure and content of webpages."
+},
+{
+q: "Which language is used to style webpages?",
+options: ["CSS", "SQL", "Java"],
+answer: 0,
+why: "CSS controls colors, fonts, spacing and layout."
+},
+{
+q: "Which language adds interactivity to webpages?",
+options: ["HTML", "CSS", "JavaScript"],
+answer: 2,
+why: "JavaScript adds dynamic behaviour and interactivity."
+}
+],
+
+"Python Developer": [
+{
+q: "Which symbol is used for comments in Python?",
+options: ["//", "#", "/*"],
+answer: 1,
+why: "Python uses # to begin a single-line comment."
+},
+{
+q: "Which keyword defines a function?",
+options: ["function", "define", "def"],
+answer: 2,
+why: "The def keyword is used to define functions in Python."
+},
+{
+q: "Which data type stores multiple items in an ordered collection?",
+options: ["List", "Integer", "Boolean"],
+answer: 0,
+why: "A Python list stores multiple ordered items."
+}
+],
+
+"Data Analyst": [
+{
+q: "Which tool is commonly used for spreadsheet analysis?",
+options: ["MS Excel", "Paint", "Notepad"],
+answer: 0,
+why: "Excel supports calculations, data analysis and charts."
+},
+{
+q: "What does SQL stand for?",
+options: [
+"Simple Query Language",
+"Structured Query Language",
+"Standard Question Language"
+],
+answer: 1,
+why: "SQL stands for Structured Query Language."
+},
+{
+q: "Which measure represents the average?",
+options: ["Mode", "Median", "Mean"],
+answer: 2,
+why: "Mean is calculated by dividing the sum by the number of values."
+}
+],
+
+"UI/UX Designer": [
+{
+q: "What does UI stand for?",
+options: ["User Interface", "Universal Internet", "User Information"],
+answer: 0,
+why: "UI means User Interface, the visual and interactive part of a product."
+},
+{
+q: "What does UX focus on?",
+options: ["Only colours", "User Experience", "Programming syntax"],
+answer: 1,
+why: "UX focuses on the overall experience of the user."
+},
+{
+q: "Which tool is commonly used for UI design?",
+options: ["Figma", "Calculator", "Command Prompt"],
+answer: 0,
+why: "Figma is a collaborative interface design and prototyping tool."
+}
+]
+
+};
+
+
+const storageKey =
+"roadmapProgress_" + (student.email || student.name || "guest");
+
+function getProgress() {
+    return JSON.parse(localStorage.getItem(storageKey)) || {};
+}
+
+function saveProgress(progress) {
+    localStorage.setItem(storageKey, JSON.stringify(progress));
+}
+
+let currentDay = 0;
+let currentQuestions = [];
+
+const topics = roadmaps[career] || roadmaps["Web Developer"];
+
+function updateProgress() {
+
+    let progress = getProgress();
+
+    let completed = Object.values(progress).filter(Boolean).length;
+
+    let percentage = (completed / 30) * 100;
+
+    document.getElementById("progressBar").style.width =
+        percentage + "%";
+
+    document.getElementById("progressText").innerText =
+        completed + " / 30 Days Completed (" +
+        Math.round(percentage) + "%)";
+}
+
+
+function createDays() {
+
+    let progress = getProgress();
+
+    let html = "";
+
+    for (let i = 0; i < 30; i++) {
+
+        let status = progress[i + 1] ? "completed" : "";
+
+        let active = currentDay === i ? "active" : "";
+
+        html += `
+            <button class="day-btn ${status} ${active}"
+            onclick="openDay(${i})">
+            Day ${i + 1}
+            ${progress[i + 1] ? "✓" : ""}
+            </button>
+        `;
+    }
+
+    document.getElementById("dayButtons").innerHTML = html;
+
+    updateProgress();
+}
+
+
+function openDay(day) {
+
+    currentDay = day;
+
+    let topic = topics[day];
+
+    let progress = getProgress();
+
+    document.getElementById("lesson").innerHTML = `
+
+        <h2>📘 Day ${day + 1}: ${topic}</h2>
+
+        <p><b>Learning Goal:</b></p>
+
+        <p>Understand the basics of ${topic} and learn how it is used in your career.</p>
+
+        <div class="challenge">
+
+            <h3>⭐ Smart Practical Challenge</h3>
+
+            <p>${challenges[career] || challenges["Web Developer"]}</p>
+
+            <p>Try to apply today's topic while completing this task.</p>
+
+        </div>
+
+        <p>After revising the topic and attempting the practical task, take the knowledge check below.</p>
+
+        <button onclick="startQuiz()">
+            Start Knowledge Check
+        </button>
+
+        <p style="color:green;">
+            ${progress[day + 1] ? "✓ This day is already completed!" : ""}
+        </p>
+    `;
+
+    document.getElementById("quizArea").style.display = "none";
+
+    createDays();
+}
+
+
+function startQuiz() {
+
+    currentQuestions = quizBank[career] || quizBank["Web Developer"];
+
+    let html = "";
+
+    currentQuestions.forEach((q, index) => {
+
+        html += `
+            <div style="margin-bottom:20px;">
+
+                <h3>Q${index + 1}. ${q.q}</h3>
+        `;
+
+        q.options.forEach((option, optionIndex) => {
+
+            html += `
+                <label class="option">
+
+                    <input type="radio"
+                    name="question${index}"
+                    value="${optionIndex}">
+
+                    ${option}
+
+                </label>
+            `;
+
+        });
+
+        html += `</div>`;
+
+    });
+
+    document.getElementById("questions").innerHTML = html;
+
+    document.getElementById("feedback").innerHTML = "";
+
+    document.getElementById("quizArea").style.display = "block";
+
+    document.getElementById("quizArea").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+function checkAnswers() {
+
+    let score = 0;
+
+    let reviewHTML = "";
+
+    for (let i = 0; i < currentQuestions.length; i++) {
+
+        let selected = document.querySelector(
+            'input[name="question' + i + '"]:checked'
+        );
+
+        if (!selected) {
+            alert("Please answer all questions!");
+            return;
+        }
+
+        let chosen = Number(selected.value);
+
+        let correct = currentQuestions[i].answer;
+
+        if (chosen === correct) {
+
+            score++;
+
+            reviewHTML += `
+                <p style="color:green;">
+                    ✅ Question ${i + 1}: Correct!
+                </p>
+            `;
+
+        } else {
+
+            reviewHTML += `
+                <p style="color:red;">
+                    ❌ Question ${i + 1}: Wrong Answer!
+                </p>
+
+                <p style="color:green;">
+                    ✅ Correct Answer:
+                    <b>${currentQuestions[i].options[correct]}</b>
+                </p>
+            `;
+
+        }
+
+        reviewHTML += `
+            <p><b>Explanation:</b>
+            ${currentQuestions[i].why}</p>
+            <hr>
+        `;
+
+    }
+
+    reviewHTML += `<h2>Your Score: ${score}/3</h2>`;
+
+    if (score >= 2) {
+
+        let progress = getProgress();
+
+        progress[currentDay + 1] = true;
+
+        saveProgress(progress);
+
+        reviewHTML += `
+            <h3 style="color:green;">
+                🎉 Congratulations! Day Completed!
+            </h3>
+            <p>You successfully passed today's knowledge check.</p>
+        `;
+
+    } else {
+
+        reviewHTML += `
+            <h3 style="color:red;">
+                ❌ Not Passed! Revise the topic and try again.
+            </h3>
+        `;
+
+    }
+
+    document.getElementById("questions").innerHTML = "";
+
+    document.getElementById("feedback").innerHTML = reviewHTML;
+
+    createDays();
+
+}
+
+
+createDays();
+
+openDay(0);
+
+</script>
+
+</body>
+</html>
